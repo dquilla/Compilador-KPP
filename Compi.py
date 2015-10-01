@@ -2,9 +2,27 @@ import ply.lex as lex
 import ply.yacc as yacc
 
 #Lista de tokens posibles
-tokens = ['TIPO_INT', 'TIPO_FLOAT', 'TIPO_STRING', 'TIPO_CHAR', 'INT', 'STRING', 'CHAR', 'FLOAT',
-            'MAIN', 'DELIMITADOR', 'SEPARADOR', 'OPERADOR', 'OPERADOR_LOGICO', 'IDENTIFICADOR', 'OPERADOR_ASIGNACION', ##Checar que hacer con MAIN D:
-            'IF', 'ELSE', 'FOR', 'WHILE', 'PRINT', 'INPUT']
+tokens = ['TIPO_INT',
+          'TIPO_FLOAT',
+          'TIPO_STRING',
+          'TIPO_CHAR',
+          'INT',
+          'STRING',
+          'CHAR',
+          'FLOAT',
+          'MAIN',
+          'DELIMITADOR',
+          'SEPARADOR',
+          'OPERADOR',
+          'OPERADOR_LOGICO',
+          'IDENTIFICADOR',
+          'OPERADOR_ASIGNACION', ##Checar que hacer con MAIN D:
+          'IF',
+          'ELSE',
+          'FOR',
+          'WHILE',
+          'PRINT',
+          'INPUT']
 
 #Tokens para palabras reservadas
 t_ignore = ' \t\n'
@@ -70,21 +88,23 @@ def p_bloqueCodigoY(p):
 #Estatuto
 def p_estatuto(p):
     '''estatuto : escritura
+                | input
                 | if
                 | asignacion
                 | for
-                | while'''
+                | while
+                | idFuncion'''
 
 #Funcion
 def p_funcion(p):
     '''funcion : tipo idFuncion DELIMITADOR bloqueCodigo DELIMITADOR'''
     
 def p_idFuncion(p):
-    '''idFuncion : IDENTIFICADOR DELIMITADOR idFuncionX DELIMITADOR'''
+    '''idFuncion : IDENTIFICADOR DELIMITADOR idFuncionX'''
     
 def p_idFuncionX(p):
-    '''idFuncionX : tipo IDENTIFICADOR idFuncionY
-                  | ''' #Epsilon
+    '''idFuncionX : tipo IDENTIFICADOR idFuncionY DELIMITADOR
+                  | DELIMITADOR''' #Epsilon
     
 def p_idFuncionY(p):
     '''idFuncionY : SEPARADOR idFuncionX'''
@@ -132,11 +152,15 @@ def p_escritura(p):
 
 #Asignacion
 def p_asignacion(p):
-    '''asignacion : IDENTIFICADOR asignacionX OPERADOR_ASIGNACION operacion DELIMITADOR'''
+    '''asignacion : IDENTIFICADOR asignacionX OPERADOR_ASIGNACION asignacionY DELIMITADOR'''
     
 def p_asignacionX(p):
     '''asignacionX : DELIMITADOR exp DELIMITADOR
                    | ''' #Epsilon
+
+def p_asignacionY(p):
+    '''asignacionY : idFuncion
+                   | operacion'''
 
 #Exp
 def p_exp(p):
@@ -156,8 +180,12 @@ def p_terminoX(p):
                 
 #For
 def p_for(p):
-    '''for : FOR DELIMITADOR asignacion DELIMITADOR operacion DELIMITADOR exp DELIMITADOR DELIMITADOR bloqueCodigo DELIMITADOR'''
-    
+    '''for : FOR DELIMITADOR asignacion DELIMITADOR operacion DELIMITADOR forX DELIMITADOR DELIMITADOR bloqueCodigo DELIMITADOR'''
+
+def p_forX(p):
+    '''forX : exp
+            | asignacion'''
+
 #While
 def p_while(p):
     '''while : WHILE DELIMITADOR operacion DELIMITADOR DELIMITADOR bloqueCodigo DELIMITADOR'''
@@ -169,6 +197,10 @@ def p_if(p):
 def p_ifX(p):
     '''ifX : ELSE DELIMITADOR bloqueCodigo DELIMITADOR
            | ''' #Epsilon
+
+#Input
+def p_input(p):
+    '''input : IDENTIFICADOR OPERADOR_ASIGNACION INPUT DELIMITADOR tipo DELIMITADOR'''
 
 #Constante
 def p_constante(p):
