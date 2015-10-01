@@ -2,9 +2,27 @@ import ply.lex as lex
 import ply.yacc as yacc
 
 #Lista de tokens posibles
-tokens = ['TIPO_INT', 'TIPO_FLOAT', 'TIPO_STRING', 'TIPO_CHAR', 'INT', 'STRING', 'CHAR', 'FLOAT',
-            'MAIN', 'DELIMITADOR', 'SEPARADOR', 'OPERADOR', 'OPERADOR_LOGICO', 'IDENTIFICADOR', 'OPERADOR_ASIGNACION', ##Checar que hacer con MAIN D:
-            'IF', 'ELSE', 'FOR', 'WHILE', 'PRINT', 'INPUT']
+tokens = ['TIPO_INT',
+          'TIPO_FLOAT',
+          'TIPO_STRING',
+          'TIPO_CHAR',
+          'INT',
+          'STRING',
+          'CHAR',
+          'FLOAT',
+          'MAIN',
+          'DELIMITADOR',
+          'SEPARADOR',
+          'OPERADOR',
+          'OPERADOR_LOGICO',
+          'IDENTIFICADOR',
+          'OPERADOR_ASIGNACION', ##Checar que hacer con MAIN D:
+          'IF',
+          'ELSE',
+          'FOR',
+          'WHILE',
+          'PRINT',
+          'INPUT']
 
 #Tokens para palabras reservadas
 t_ignore = ' \t\n'
