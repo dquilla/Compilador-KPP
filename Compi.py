@@ -96,11 +96,11 @@ def p_var(p):
     '''var : tipo varX'''
     
 def p_varX(p):
-    '''varX : IDENTIFICADOR varY'''
+    '''varX : IDENTIFICADOR varY varZ DELIMITADOR'''
     
 def p_varY(p):
-    '''varY : DELIMITADOR exp DELIMITADOR varZ DELIMITADOR
-            | varZ DELIMITADOR''' #Epsilon
+    '''varY : DELIMITADOR exp DELIMITADOR
+            | ''' #Epsilon
        
 def p_varZ(p):
     '''varZ : SEPARADOR varX

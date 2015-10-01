@@ -25,9 +25,9 @@ Rule 19    idFuncionX -> tipo IDENTIFICADOR idFuncionY DELIMITADOR
 Rule 20    idFuncionX -> DELIMITADOR
 Rule 21    idFuncionY -> SEPARADOR idFuncionX
 Rule 22    var -> tipo varX
-Rule 23    varX -> IDENTIFICADOR varY
-Rule 24    varY -> DELIMITADOR exp DELIMITADOR varZ DELIMITADOR
-Rule 25    varY -> varZ DELIMITADOR
+Rule 23    varX -> IDENTIFICADOR varY varZ DELIMITADOR
+Rule 24    varY -> DELIMITADOR exp DELIMITADOR
+Rule 25    varY -> <empty>
 Rule 26    varZ -> SEPARADOR varX
 Rule 27    varZ -> <empty>
 Rule 28    operacion -> expresion operacionX
@@ -71,7 +71,7 @@ Rule 64    tipo -> TIPO_FLOAT
 Terminals, with rules where they appear
 
 CHAR                 : 58
-DELIMITADOR          : 1 1 17 17 18 19 20 24 24 24 25 34 34 37 37 37 38 39 39 49 49 49 49 49 49 52 52 52 52 53 53 53 53 54 54 56 56
+DELIMITADOR          : 1 1 17 17 18 19 20 23 24 24 34 34 37 37 37 38 39 39 49 49 49 49 49 49 52 52 52 52 53 53 53 53 54 54 56 56
 ELSE                 : 54
 FLOAT                : 60
 FOR                  : 49
@@ -128,7 +128,7 @@ tipo                 : 17 19 22 56
 var                  : 2 7
 varX                 : 22 26
 varY                 : 23
-varZ                 : 24 25
+varZ                 : 23
 while                : 15
 
 Parsing method: LALR
@@ -163,8 +163,8 @@ state 1
 
     (63) tipo -> TIPO_INT .
 
-    DELIMITADOR     reduce using rule 63 (tipo -> TIPO_INT .)
     IDENTIFICADOR   reduce using rule 63 (tipo -> TIPO_INT .)
+    DELIMITADOR     reduce using rule 63 (tipo -> TIPO_INT .)
 
 
 state 2
@@ -204,23 +204,23 @@ state 4
 
     (62) tipo -> TIPO_CHAR .
 
-    DELIMITADOR     reduce using rule 62 (tipo -> TIPO_CHAR .)
     IDENTIFICADOR   reduce using rule 62 (tipo -> TIPO_CHAR .)
+    DELIMITADOR     reduce using rule 62 (tipo -> TIPO_CHAR .)
 
 
 state 5
 
     (64) tipo -> TIPO_FLOAT .
 
-    DELIMITADOR     reduce using rule 64 (tipo -> TIPO_FLOAT .)
     IDENTIFICADOR   reduce using rule 64 (tipo -> TIPO_FLOAT .)
+    DELIMITADOR     reduce using rule 64 (tipo -> TIPO_FLOAT .)
 
 
 state 6
 
     (22) var -> tipo . varX
     (17) funcion -> tipo . idFuncion DELIMITADOR bloqueCodigo DELIMITADOR
-    (23) varX -> . IDENTIFICADOR varY
+    (23) varX -> . IDENTIFICADOR varY varZ DELIMITADOR
     (18) idFuncion -> . IDENTIFICADOR DELIMITADOR idFuncionX
 
     IDENTIFICADOR   shift and go to state 12
@@ -232,8 +232,8 @@ state 7
 
     (61) tipo -> TIPO_STRING .
 
-    DELIMITADOR     reduce using rule 61 (tipo -> TIPO_STRING .)
     IDENTIFICADOR   reduce using rule 61 (tipo -> TIPO_STRING .)
+    DELIMITADOR     reduce using rule 61 (tipo -> TIPO_STRING .)
 
 
 state 8
@@ -284,44 +284,41 @@ state 11
 
 state 12
 
-    (23) varX -> IDENTIFICADOR . varY
+    (23) varX -> IDENTIFICADOR . varY varZ DELIMITADOR
     (18) idFuncion -> IDENTIFICADOR . DELIMITADOR idFuncionX
-    (24) varY -> . DELIMITADOR exp DELIMITADOR varZ DELIMITADOR
-    (25) varY -> . varZ DELIMITADOR
-    (26) varZ -> . SEPARADOR varX
-    (27) varZ -> .
+    (24) varY -> . DELIMITADOR exp DELIMITADOR
+    (25) varY -> .
 
   ! shift/reduce conflict for DELIMITADOR resolved as shift
-    DELIMITADOR     shift and go to state 19
-    SEPARADOR       shift and go to state 17
+    DELIMITADOR     shift and go to state 18
+    SEPARADOR       reduce using rule 25 (varY -> .)
 
-  ! DELIMITADOR     [ reduce using rule 27 (varZ -> .) ]
+  ! DELIMITADOR     [ reduce using rule 25 (varY -> .) ]
 
-    varY                           shift and go to state 18
-    varZ                           shift and go to state 20
+    varY                           shift and go to state 17
 
 state 13
 
     (22) var -> tipo varX .
 
-    TIPO_STRING     reduce using rule 22 (var -> tipo varX .)
-    TIPO_CHAR       reduce using rule 22 (var -> tipo varX .)
-    TIPO_INT        reduce using rule 22 (var -> tipo varX .)
-    TIPO_FLOAT      reduce using rule 22 (var -> tipo varX .)
-    MAIN            reduce using rule 22 (var -> tipo varX .)
     PRINT           reduce using rule 22 (var -> tipo varX .)
     IDENTIFICADOR   reduce using rule 22 (var -> tipo varX .)
     IF              reduce using rule 22 (var -> tipo varX .)
     FOR             reduce using rule 22 (var -> tipo varX .)
     WHILE           reduce using rule 22 (var -> tipo varX .)
+    TIPO_STRING     reduce using rule 22 (var -> tipo varX .)
+    TIPO_CHAR       reduce using rule 22 (var -> tipo varX .)
+    TIPO_INT        reduce using rule 22 (var -> tipo varX .)
+    TIPO_FLOAT      reduce using rule 22 (var -> tipo varX .)
     DELIMITADOR     reduce using rule 22 (var -> tipo varX .)
+    MAIN            reduce using rule 22 (var -> tipo varX .)
 
 
 state 14
 
     (17) funcion -> tipo idFuncion . DELIMITADOR bloqueCodigo DELIMITADOR
 
-    DELIMITADOR     shift and go to state 21
+    DELIMITADOR     shift and go to state 19
 
 
 state 15
@@ -357,59 +354,44 @@ state 16
     (63) tipo -> . TIPO_INT
     (64) tipo -> . TIPO_FLOAT
 
-    PRINT           shift and go to state 23
-    IDENTIFICADOR   shift and go to state 31
-    IF              shift and go to state 34
-    FOR             shift and go to state 30
-    WHILE           shift and go to state 22
+    PRINT           shift and go to state 21
+    IDENTIFICADOR   shift and go to state 29
+    IF              shift and go to state 32
+    FOR             shift and go to state 28
+    WHILE           shift and go to state 20
     TIPO_STRING     shift and go to state 7
     TIPO_CHAR       shift and go to state 4
     TIPO_INT        shift and go to state 1
     TIPO_FLOAT      shift and go to state 5
 
-    asignacion                     shift and go to state 35
-    estatuto                       shift and go to state 27
-    tipo                           shift and go to state 38
-    for                            shift and go to state 26
-    idFuncion                      shift and go to state 32
-    while                          shift and go to state 36
-    if                             shift and go to state 25
-    bloqueCodigo                   shift and go to state 33
-    var                            shift and go to state 28
-    input                          shift and go to state 29
-    escritura                      shift and go to state 37
-    bloqueCodigoX                  shift and go to state 24
+    asignacion                     shift and go to state 33
+    estatuto                       shift and go to state 25
+    tipo                           shift and go to state 36
+    for                            shift and go to state 24
+    idFuncion                      shift and go to state 30
+    while                          shift and go to state 34
+    if                             shift and go to state 23
+    bloqueCodigo                   shift and go to state 31
+    var                            shift and go to state 26
+    input                          shift and go to state 27
+    escritura                      shift and go to state 35
+    bloqueCodigoX                  shift and go to state 22
 
 state 17
 
-    (26) varZ -> SEPARADOR . varX
-    (23) varX -> . IDENTIFICADOR varY
+    (23) varX -> IDENTIFICADOR varY . varZ DELIMITADOR
+    (26) varZ -> . SEPARADOR varX
+    (27) varZ -> .
 
-    IDENTIFICADOR   shift and go to state 39
+    SEPARADOR       shift and go to state 37
+    DELIMITADOR     reduce using rule 27 (varZ -> .)
 
-    varX                           shift and go to state 40
+    varZ                           shift and go to state 38
 
 state 18
 
-    (23) varX -> IDENTIFICADOR varY .
-
-    DELIMITADOR     reduce using rule 23 (varX -> IDENTIFICADOR varY .)
-    TIPO_STRING     reduce using rule 23 (varX -> IDENTIFICADOR varY .)
-    TIPO_CHAR       reduce using rule 23 (varX -> IDENTIFICADOR varY .)
-    TIPO_INT        reduce using rule 23 (varX -> IDENTIFICADOR varY .)
-    TIPO_FLOAT      reduce using rule 23 (varX -> IDENTIFICADOR varY .)
-    MAIN            reduce using rule 23 (varX -> IDENTIFICADOR varY .)
-    PRINT           reduce using rule 23 (varX -> IDENTIFICADOR varY .)
-    IDENTIFICADOR   reduce using rule 23 (varX -> IDENTIFICADOR varY .)
-    IF              reduce using rule 23 (varX -> IDENTIFICADOR varY .)
-    FOR             reduce using rule 23 (varX -> IDENTIFICADOR varY .)
-    WHILE           reduce using rule 23 (varX -> IDENTIFICADOR varY .)
-
-
-state 19
-
     (18) idFuncion -> IDENTIFICADOR DELIMITADOR . idFuncionX
-    (24) varY -> DELIMITADOR . exp DELIMITADOR varZ DELIMITADOR
+    (24) varY -> DELIMITADOR . exp DELIMITADOR
     (19) idFuncionX -> . tipo IDENTIFICADOR idFuncionY DELIMITADOR
     (20) idFuncionX -> . DELIMITADOR
     (43) exp -> . termino expX
@@ -426,32 +408,25 @@ state 19
     (59) constante -> . INT
     (60) constante -> . FLOAT
 
-    DELIMITADOR     shift and go to state 46
+    DELIMITADOR     shift and go to state 42
     TIPO_STRING     shift and go to state 7
     TIPO_CHAR       shift and go to state 4
     TIPO_INT        shift and go to state 1
     TIPO_FLOAT      shift and go to state 5
-    OPERADOR        shift and go to state 45
+    OPERADOR        shift and go to state 40
     STRING          shift and go to state 48
-    CHAR            shift and go to state 41
-    INT             shift and go to state 51
-    FLOAT           shift and go to state 50
+    CHAR            shift and go to state 43
+    INT             shift and go to state 50
+    FLOAT           shift and go to state 41
 
-    tipo                           shift and go to state 44
+    tipo                           shift and go to state 39
     constante                      shift and go to state 49
-    termino                        shift and go to state 42
-    exp                            shift and go to state 52
-    factor                         shift and go to state 47
-    idFuncionX                     shift and go to state 43
+    termino                        shift and go to state 44
+    exp                            shift and go to state 45
+    factor                         shift and go to state 46
+    idFuncionX                     shift and go to state 47
 
-state 20
-
-    (25) varY -> varZ . DELIMITADOR
-
-    DELIMITADOR     shift and go to state 53
-
-
-state 21
+state 19
 
     (17) funcion -> tipo idFuncion DELIMITADOR . bloqueCodigo DELIMITADOR
     (5) bloqueCodigo -> . bloqueCodigoX bloqueCodigoY
@@ -477,44 +452,44 @@ state 21
     (63) tipo -> . TIPO_INT
     (64) tipo -> . TIPO_FLOAT
 
-    PRINT           shift and go to state 23
-    IDENTIFICADOR   shift and go to state 31
-    IF              shift and go to state 34
-    FOR             shift and go to state 30
-    WHILE           shift and go to state 22
+    PRINT           shift and go to state 21
+    IDENTIFICADOR   shift and go to state 29
+    IF              shift and go to state 32
+    FOR             shift and go to state 28
+    WHILE           shift and go to state 20
     TIPO_STRING     shift and go to state 7
     TIPO_CHAR       shift and go to state 4
     TIPO_INT        shift and go to state 1
     TIPO_FLOAT      shift and go to state 5
 
-    asignacion                     shift and go to state 35
-    tipo                           shift and go to state 38
-    estatuto                       shift and go to state 27
-    for                            shift and go to state 26
-    idFuncion                      shift and go to state 32
-    while                          shift and go to state 36
-    if                             shift and go to state 25
-    bloqueCodigo                   shift and go to state 54
-    var                            shift and go to state 28
-    input                          shift and go to state 29
-    escritura                      shift and go to state 37
-    bloqueCodigoX                  shift and go to state 24
+    asignacion                     shift and go to state 33
+    tipo                           shift and go to state 36
+    estatuto                       shift and go to state 25
+    for                            shift and go to state 24
+    idFuncion                      shift and go to state 30
+    while                          shift and go to state 34
+    if                             shift and go to state 23
+    bloqueCodigo                   shift and go to state 51
+    var                            shift and go to state 26
+    input                          shift and go to state 27
+    escritura                      shift and go to state 35
+    bloqueCodigoX                  shift and go to state 22
 
-state 22
+state 20
 
     (52) while -> WHILE . DELIMITADOR operacion DELIMITADOR DELIMITADOR bloqueCodigo DELIMITADOR
 
-    DELIMITADOR     shift and go to state 55
+    DELIMITADOR     shift and go to state 52
 
 
-state 23
+state 21
 
     (37) escritura -> PRINT . DELIMITADOR operacion DELIMITADOR DELIMITADOR
 
-    DELIMITADOR     shift and go to state 56
+    DELIMITADOR     shift and go to state 53
 
 
-state 24
+state 22
 
     (5) bloqueCodigo -> bloqueCodigoX . bloqueCodigoY
     (8) bloqueCodigoY -> . bloqueCodigo
@@ -543,31 +518,31 @@ state 24
     (64) tipo -> . TIPO_FLOAT
 
     DELIMITADOR     reduce using rule 9 (bloqueCodigoY -> .)
-    PRINT           shift and go to state 23
-    IDENTIFICADOR   shift and go to state 31
-    IF              shift and go to state 34
-    FOR             shift and go to state 30
-    WHILE           shift and go to state 22
+    PRINT           shift and go to state 21
+    IDENTIFICADOR   shift and go to state 29
+    IF              shift and go to state 32
+    FOR             shift and go to state 28
+    WHILE           shift and go to state 20
     TIPO_STRING     shift and go to state 7
     TIPO_CHAR       shift and go to state 4
     TIPO_INT        shift and go to state 1
     TIPO_FLOAT      shift and go to state 5
 
-    for                            shift and go to state 26
-    asignacion                     shift and go to state 35
-    estatuto                       shift and go to state 27
-    tipo                           shift and go to state 38
-    idFuncion                      shift and go to state 32
-    while                          shift and go to state 36
-    if                             shift and go to state 25
-    bloqueCodigo                   shift and go to state 58
-    var                            shift and go to state 28
-    input                          shift and go to state 29
-    bloqueCodigoY                  shift and go to state 57
-    bloqueCodigoX                  shift and go to state 24
-    escritura                      shift and go to state 37
+    for                            shift and go to state 24
+    asignacion                     shift and go to state 33
+    estatuto                       shift and go to state 25
+    tipo                           shift and go to state 36
+    idFuncion                      shift and go to state 30
+    while                          shift and go to state 34
+    if                             shift and go to state 23
+    bloqueCodigo                   shift and go to state 55
+    var                            shift and go to state 26
+    input                          shift and go to state 27
+    bloqueCodigoY                  shift and go to state 54
+    bloqueCodigoX                  shift and go to state 22
+    escritura                      shift and go to state 35
 
-state 25
+state 23
 
     (12) estatuto -> if .
 
@@ -583,7 +558,7 @@ state 25
     DELIMITADOR     reduce using rule 12 (estatuto -> if .)
 
 
-state 26
+state 24
 
     (14) estatuto -> for .
 
@@ -599,7 +574,7 @@ state 26
     DELIMITADOR     reduce using rule 14 (estatuto -> for .)
 
 
-state 27
+state 25
 
     (6) bloqueCodigoX -> estatuto .
 
@@ -615,7 +590,7 @@ state 27
     DELIMITADOR     reduce using rule 6 (bloqueCodigoX -> estatuto .)
 
 
-state 28
+state 26
 
     (7) bloqueCodigoX -> var .
 
@@ -631,7 +606,7 @@ state 28
     DELIMITADOR     reduce using rule 7 (bloqueCodigoX -> var .)
 
 
-state 29
+state 27
 
     (11) estatuto -> input .
 
@@ -647,14 +622,14 @@ state 29
     DELIMITADOR     reduce using rule 11 (estatuto -> input .)
 
 
-state 30
+state 28
 
     (49) for -> FOR . DELIMITADOR asignacion DELIMITADOR operacion DELIMITADOR forX DELIMITADOR DELIMITADOR bloqueCodigo DELIMITADOR
 
-    DELIMITADOR     shift and go to state 59
+    DELIMITADOR     shift and go to state 56
 
 
-state 31
+state 29
 
     (56) input -> IDENTIFICADOR . OPERADOR_ASIGNACION INPUT DELIMITADOR tipo DELIMITADOR
     (38) asignacion -> IDENTIFICADOR . asignacionX OPERADOR_ASIGNACION asignacionY DELIMITADOR
@@ -663,14 +638,14 @@ state 31
     (40) asignacionX -> .
 
   ! shift/reduce conflict for OPERADOR_ASIGNACION resolved as shift
-    OPERADOR_ASIGNACION shift and go to state 61
-    DELIMITADOR     shift and go to state 60
+    OPERADOR_ASIGNACION shift and go to state 58
+    DELIMITADOR     shift and go to state 57
 
   ! OPERADOR_ASIGNACION [ reduce using rule 40 (asignacionX -> .) ]
 
-    asignacionX                    shift and go to state 62
+    asignacionX                    shift and go to state 59
 
-state 32
+state 30
 
     (16) estatuto -> idFuncion .
 
@@ -686,21 +661,21 @@ state 32
     DELIMITADOR     reduce using rule 16 (estatuto -> idFuncion .)
 
 
-state 33
+state 31
 
     (1) programa -> programaX MAIN DELIMITADOR bloqueCodigo . DELIMITADOR
 
-    DELIMITADOR     shift and go to state 63
+    DELIMITADOR     shift and go to state 60
 
 
-state 34
+state 32
 
     (53) if -> IF . DELIMITADOR operacion DELIMITADOR DELIMITADOR bloqueCodigo DELIMITADOR ifX
 
-    DELIMITADOR     shift and go to state 64
+    DELIMITADOR     shift and go to state 61
 
 
-state 35
+state 33
 
     (13) estatuto -> asignacion .
 
@@ -716,7 +691,7 @@ state 35
     DELIMITADOR     reduce using rule 13 (estatuto -> asignacion .)
 
 
-state 36
+state 34
 
     (15) estatuto -> while .
 
@@ -732,7 +707,7 @@ state 36
     DELIMITADOR     reduce using rule 15 (estatuto -> while .)
 
 
-state 37
+state 35
 
     (10) estatuto -> escritura .
 
@@ -748,84 +723,39 @@ state 37
     DELIMITADOR     reduce using rule 10 (estatuto -> escritura .)
 
 
-state 38
+state 36
 
     (22) var -> tipo . varX
-    (23) varX -> . IDENTIFICADOR varY
+    (23) varX -> . IDENTIFICADOR varY varZ DELIMITADOR
 
-    IDENTIFICADOR   shift and go to state 39
+    IDENTIFICADOR   shift and go to state 62
 
     varX                           shift and go to state 13
 
+state 37
+
+    (26) varZ -> SEPARADOR . varX
+    (23) varX -> . IDENTIFICADOR varY varZ DELIMITADOR
+
+    IDENTIFICADOR   shift and go to state 62
+
+    varX                           shift and go to state 63
+
+state 38
+
+    (23) varX -> IDENTIFICADOR varY varZ . DELIMITADOR
+
+    DELIMITADOR     shift and go to state 64
+
+
 state 39
-
-    (23) varX -> IDENTIFICADOR . varY
-    (24) varY -> . DELIMITADOR exp DELIMITADOR varZ DELIMITADOR
-    (25) varY -> . varZ DELIMITADOR
-    (26) varZ -> . SEPARADOR varX
-    (27) varZ -> .
-
-  ! shift/reduce conflict for DELIMITADOR resolved as shift
-    DELIMITADOR     shift and go to state 65
-    SEPARADOR       shift and go to state 17
-
-  ! DELIMITADOR     [ reduce using rule 27 (varZ -> .) ]
-
-    varY                           shift and go to state 18
-    varZ                           shift and go to state 20
-
-state 40
-
-    (26) varZ -> SEPARADOR varX .
-
-    DELIMITADOR     reduce using rule 26 (varZ -> SEPARADOR varX .)
-
-
-state 41
-
-    (58) constante -> CHAR .
-
-    OPERADOR        reduce using rule 58 (constante -> CHAR .)
-    DELIMITADOR     reduce using rule 58 (constante -> CHAR .)
-    OPERADOR_LOGICO reduce using rule 58 (constante -> CHAR .)
-
-
-state 42
-
-    (43) exp -> termino . expX
-    (44) expX -> . OPERADOR exp
-    (45) expX -> .
-
-    OPERADOR        shift and go to state 66
-    DELIMITADOR     reduce using rule 45 (expX -> .)
-    OPERADOR_LOGICO reduce using rule 45 (expX -> .)
-
-    expX                           shift and go to state 67
-
-state 43
-
-    (18) idFuncion -> IDENTIFICADOR DELIMITADOR idFuncionX .
-
-    PRINT           reduce using rule 18 (idFuncion -> IDENTIFICADOR DELIMITADOR idFuncionX .)
-    IDENTIFICADOR   reduce using rule 18 (idFuncion -> IDENTIFICADOR DELIMITADOR idFuncionX .)
-    IF              reduce using rule 18 (idFuncion -> IDENTIFICADOR DELIMITADOR idFuncionX .)
-    FOR             reduce using rule 18 (idFuncion -> IDENTIFICADOR DELIMITADOR idFuncionX .)
-    WHILE           reduce using rule 18 (idFuncion -> IDENTIFICADOR DELIMITADOR idFuncionX .)
-    TIPO_STRING     reduce using rule 18 (idFuncion -> IDENTIFICADOR DELIMITADOR idFuncionX .)
-    TIPO_CHAR       reduce using rule 18 (idFuncion -> IDENTIFICADOR DELIMITADOR idFuncionX .)
-    TIPO_INT        reduce using rule 18 (idFuncion -> IDENTIFICADOR DELIMITADOR idFuncionX .)
-    TIPO_FLOAT      reduce using rule 18 (idFuncion -> IDENTIFICADOR DELIMITADOR idFuncionX .)
-    DELIMITADOR     reduce using rule 18 (idFuncion -> IDENTIFICADOR DELIMITADOR idFuncionX .)
-
-
-state 44
 
     (19) idFuncionX -> tipo . IDENTIFICADOR idFuncionY DELIMITADOR
 
-    IDENTIFICADOR   shift and go to state 68
+    IDENTIFICADOR   shift and go to state 65
 
 
-state 45
+state 40
 
     (36) factor -> OPERADOR . constante
     (57) constante -> . STRING
@@ -834,13 +764,22 @@ state 45
     (60) constante -> . FLOAT
 
     STRING          shift and go to state 48
-    CHAR            shift and go to state 41
-    INT             shift and go to state 51
-    FLOAT           shift and go to state 50
+    CHAR            shift and go to state 43
+    INT             shift and go to state 50
+    FLOAT           shift and go to state 41
 
-    constante                      shift and go to state 69
+    constante                      shift and go to state 66
 
-state 46
+state 41
+
+    (60) constante -> FLOAT .
+
+    OPERADOR        reduce using rule 60 (constante -> FLOAT .)
+    OPERADOR_LOGICO reduce using rule 60 (constante -> FLOAT .)
+    DELIMITADOR     reduce using rule 60 (constante -> FLOAT .)
+
+
+state 42
 
     (20) idFuncionX -> DELIMITADOR .
     (34) factor -> DELIMITADOR . expresion DELIMITADOR
@@ -865,22 +804,50 @@ state 46
     TIPO_CHAR       reduce using rule 20 (idFuncionX -> DELIMITADOR .)
     TIPO_INT        reduce using rule 20 (idFuncionX -> DELIMITADOR .)
     TIPO_FLOAT      reduce using rule 20 (idFuncionX -> DELIMITADOR .)
-    DELIMITADOR     shift and go to state 71
-    OPERADOR        shift and go to state 45
+    DELIMITADOR     shift and go to state 68
+    OPERADOR        shift and go to state 40
     STRING          shift and go to state 48
-    CHAR            shift and go to state 41
-    INT             shift and go to state 51
-    FLOAT           shift and go to state 50
+    CHAR            shift and go to state 43
+    INT             shift and go to state 50
+    FLOAT           shift and go to state 41
 
   ! DELIMITADOR     [ reduce using rule 20 (idFuncionX -> DELIMITADOR .) ]
 
-    expresion                      shift and go to state 70
+    expresion                      shift and go to state 67
     constante                      shift and go to state 49
-    termino                        shift and go to state 42
-    exp                            shift and go to state 72
-    factor                         shift and go to state 47
+    termino                        shift and go to state 44
+    exp                            shift and go to state 69
+    factor                         shift and go to state 46
 
-state 47
+state 43
+
+    (58) constante -> CHAR .
+
+    OPERADOR        reduce using rule 58 (constante -> CHAR .)
+    OPERADOR_LOGICO reduce using rule 58 (constante -> CHAR .)
+    DELIMITADOR     reduce using rule 58 (constante -> CHAR .)
+
+
+state 44
+
+    (43) exp -> termino . expX
+    (44) expX -> . OPERADOR exp
+    (45) expX -> .
+
+    OPERADOR        shift and go to state 70
+    DELIMITADOR     reduce using rule 45 (expX -> .)
+    OPERADOR_LOGICO reduce using rule 45 (expX -> .)
+
+    expX                           shift and go to state 71
+
+state 45
+
+    (24) varY -> DELIMITADOR exp . DELIMITADOR
+
+    DELIMITADOR     shift and go to state 72
+
+
+state 46
 
     (46) termino -> factor . terminoX
     (47) terminoX -> . OPERADOR termino
@@ -895,13 +862,29 @@ state 47
 
     terminoX                       shift and go to state 74
 
+state 47
+
+    (18) idFuncion -> IDENTIFICADOR DELIMITADOR idFuncionX .
+
+    PRINT           reduce using rule 18 (idFuncion -> IDENTIFICADOR DELIMITADOR idFuncionX .)
+    IDENTIFICADOR   reduce using rule 18 (idFuncion -> IDENTIFICADOR DELIMITADOR idFuncionX .)
+    IF              reduce using rule 18 (idFuncion -> IDENTIFICADOR DELIMITADOR idFuncionX .)
+    FOR             reduce using rule 18 (idFuncion -> IDENTIFICADOR DELIMITADOR idFuncionX .)
+    WHILE           reduce using rule 18 (idFuncion -> IDENTIFICADOR DELIMITADOR idFuncionX .)
+    TIPO_STRING     reduce using rule 18 (idFuncion -> IDENTIFICADOR DELIMITADOR idFuncionX .)
+    TIPO_CHAR       reduce using rule 18 (idFuncion -> IDENTIFICADOR DELIMITADOR idFuncionX .)
+    TIPO_INT        reduce using rule 18 (idFuncion -> IDENTIFICADOR DELIMITADOR idFuncionX .)
+    TIPO_FLOAT      reduce using rule 18 (idFuncion -> IDENTIFICADOR DELIMITADOR idFuncionX .)
+    DELIMITADOR     reduce using rule 18 (idFuncion -> IDENTIFICADOR DELIMITADOR idFuncionX .)
+
+
 state 48
 
     (57) constante -> STRING .
 
     OPERADOR        reduce using rule 57 (constante -> STRING .)
-    DELIMITADOR     reduce using rule 57 (constante -> STRING .)
     OPERADOR_LOGICO reduce using rule 57 (constante -> STRING .)
+    DELIMITADOR     reduce using rule 57 (constante -> STRING .)
 
 
 state 49
@@ -915,54 +898,21 @@ state 49
 
 state 50
 
-    (60) constante -> FLOAT .
+    (59) constante -> INT .
 
-    OPERADOR        reduce using rule 60 (constante -> FLOAT .)
-    DELIMITADOR     reduce using rule 60 (constante -> FLOAT .)
-    OPERADOR_LOGICO reduce using rule 60 (constante -> FLOAT .)
+    OPERADOR        reduce using rule 59 (constante -> INT .)
+    OPERADOR_LOGICO reduce using rule 59 (constante -> INT .)
+    DELIMITADOR     reduce using rule 59 (constante -> INT .)
 
 
 state 51
 
-    (59) constante -> INT .
-
-    OPERADOR        reduce using rule 59 (constante -> INT .)
-    DELIMITADOR     reduce using rule 59 (constante -> INT .)
-    OPERADOR_LOGICO reduce using rule 59 (constante -> INT .)
-
-
-state 52
-
-    (24) varY -> DELIMITADOR exp . DELIMITADOR varZ DELIMITADOR
+    (17) funcion -> tipo idFuncion DELIMITADOR bloqueCodigo . DELIMITADOR
 
     DELIMITADOR     shift and go to state 75
 
 
-state 53
-
-    (25) varY -> varZ DELIMITADOR .
-
-    DELIMITADOR     reduce using rule 25 (varY -> varZ DELIMITADOR .)
-    PRINT           reduce using rule 25 (varY -> varZ DELIMITADOR .)
-    IDENTIFICADOR   reduce using rule 25 (varY -> varZ DELIMITADOR .)
-    IF              reduce using rule 25 (varY -> varZ DELIMITADOR .)
-    FOR             reduce using rule 25 (varY -> varZ DELIMITADOR .)
-    WHILE           reduce using rule 25 (varY -> varZ DELIMITADOR .)
-    TIPO_STRING     reduce using rule 25 (varY -> varZ DELIMITADOR .)
-    TIPO_CHAR       reduce using rule 25 (varY -> varZ DELIMITADOR .)
-    TIPO_INT        reduce using rule 25 (varY -> varZ DELIMITADOR .)
-    TIPO_FLOAT      reduce using rule 25 (varY -> varZ DELIMITADOR .)
-    MAIN            reduce using rule 25 (varY -> varZ DELIMITADOR .)
-
-
-state 54
-
-    (17) funcion -> tipo idFuncion DELIMITADOR bloqueCodigo . DELIMITADOR
-
-    DELIMITADOR     shift and go to state 76
-
-
-state 55
+state 52
 
     (52) while -> WHILE DELIMITADOR . operacion DELIMITADOR DELIMITADOR bloqueCodigo DELIMITADOR
     (28) operacion -> . expresion operacionX
@@ -977,21 +927,21 @@ state 55
     (59) constante -> . INT
     (60) constante -> . FLOAT
 
-    DELIMITADOR     shift and go to state 71
-    OPERADOR        shift and go to state 45
+    DELIMITADOR     shift and go to state 68
+    OPERADOR        shift and go to state 40
     STRING          shift and go to state 48
-    CHAR            shift and go to state 41
-    INT             shift and go to state 51
-    FLOAT           shift and go to state 50
+    CHAR            shift and go to state 43
+    INT             shift and go to state 50
+    FLOAT           shift and go to state 41
 
-    expresion                      shift and go to state 77
-    operacion                      shift and go to state 78
+    expresion                      shift and go to state 76
+    operacion                      shift and go to state 77
     constante                      shift and go to state 49
-    exp                            shift and go to state 72
-    factor                         shift and go to state 47
-    termino                        shift and go to state 42
+    exp                            shift and go to state 69
+    factor                         shift and go to state 46
+    termino                        shift and go to state 44
 
-state 56
+state 53
 
     (37) escritura -> PRINT DELIMITADOR . operacion DELIMITADOR DELIMITADOR
     (28) operacion -> . expresion operacionX
@@ -1006,44 +956,44 @@ state 56
     (59) constante -> . INT
     (60) constante -> . FLOAT
 
-    DELIMITADOR     shift and go to state 71
-    OPERADOR        shift and go to state 45
+    DELIMITADOR     shift and go to state 68
+    OPERADOR        shift and go to state 40
     STRING          shift and go to state 48
-    CHAR            shift and go to state 41
-    INT             shift and go to state 51
-    FLOAT           shift and go to state 50
+    CHAR            shift and go to state 43
+    INT             shift and go to state 50
+    FLOAT           shift and go to state 41
 
-    expresion                      shift and go to state 77
-    operacion                      shift and go to state 79
+    expresion                      shift and go to state 76
+    operacion                      shift and go to state 78
     constante                      shift and go to state 49
-    termino                        shift and go to state 42
-    exp                            shift and go to state 72
-    factor                         shift and go to state 47
+    termino                        shift and go to state 44
+    exp                            shift and go to state 69
+    factor                         shift and go to state 46
 
-state 57
+state 54
 
     (5) bloqueCodigo -> bloqueCodigoX bloqueCodigoY .
 
     DELIMITADOR     reduce using rule 5 (bloqueCodigo -> bloqueCodigoX bloqueCodigoY .)
 
 
-state 58
+state 55
 
     (8) bloqueCodigoY -> bloqueCodigo .
 
     DELIMITADOR     reduce using rule 8 (bloqueCodigoY -> bloqueCodigo .)
 
 
-state 59
+state 56
 
     (49) for -> FOR DELIMITADOR . asignacion DELIMITADOR operacion DELIMITADOR forX DELIMITADOR DELIMITADOR bloqueCodigo DELIMITADOR
     (38) asignacion -> . IDENTIFICADOR asignacionX OPERADOR_ASIGNACION asignacionY DELIMITADOR
 
-    IDENTIFICADOR   shift and go to state 81
+    IDENTIFICADOR   shift and go to state 80
 
-    asignacion                     shift and go to state 80
+    asignacion                     shift and go to state 79
 
-state 60
+state 57
 
     (18) idFuncion -> IDENTIFICADOR DELIMITADOR . idFuncionX
     (39) asignacionX -> DELIMITADOR . exp DELIMITADOR
@@ -1063,39 +1013,39 @@ state 60
     (59) constante -> . INT
     (60) constante -> . FLOAT
 
-    DELIMITADOR     shift and go to state 46
+    DELIMITADOR     shift and go to state 42
     TIPO_STRING     shift and go to state 7
     TIPO_CHAR       shift and go to state 4
     TIPO_INT        shift and go to state 1
     TIPO_FLOAT      shift and go to state 5
-    OPERADOR        shift and go to state 45
+    OPERADOR        shift and go to state 40
     STRING          shift and go to state 48
-    CHAR            shift and go to state 41
-    INT             shift and go to state 51
-    FLOAT           shift and go to state 50
+    CHAR            shift and go to state 43
+    INT             shift and go to state 50
+    FLOAT           shift and go to state 41
 
-    tipo                           shift and go to state 44
+    tipo                           shift and go to state 39
     constante                      shift and go to state 49
-    termino                        shift and go to state 42
-    exp                            shift and go to state 82
-    factor                         shift and go to state 47
-    idFuncionX                     shift and go to state 43
+    termino                        shift and go to state 44
+    exp                            shift and go to state 81
+    factor                         shift and go to state 46
+    idFuncionX                     shift and go to state 47
 
-state 61
+state 58
 
     (56) input -> IDENTIFICADOR OPERADOR_ASIGNACION . INPUT DELIMITADOR tipo DELIMITADOR
 
-    INPUT           shift and go to state 83
+    INPUT           shift and go to state 82
 
 
-state 62
+state 59
 
     (38) asignacion -> IDENTIFICADOR asignacionX . OPERADOR_ASIGNACION asignacionY DELIMITADOR
 
-    OPERADOR_ASIGNACION shift and go to state 84
+    OPERADOR_ASIGNACION shift and go to state 83
 
 
-state 63
+state 60
 
     (1) programa -> programaX MAIN DELIMITADOR bloqueCodigo DELIMITADOR .
 
@@ -1103,7 +1053,7 @@ state 63
     $end            reduce using rule 1 (programa -> programaX MAIN DELIMITADOR bloqueCodigo DELIMITADOR .)
 
 
-state 64
+state 61
 
     (53) if -> IF DELIMITADOR . operacion DELIMITADOR DELIMITADOR bloqueCodigo DELIMITADOR ifX
     (28) operacion -> . expresion operacionX
@@ -1118,88 +1068,68 @@ state 64
     (59) constante -> . INT
     (60) constante -> . FLOAT
 
-    DELIMITADOR     shift and go to state 71
-    OPERADOR        shift and go to state 45
+    DELIMITADOR     shift and go to state 68
+    OPERADOR        shift and go to state 40
     STRING          shift and go to state 48
-    CHAR            shift and go to state 41
-    INT             shift and go to state 51
-    FLOAT           shift and go to state 50
+    CHAR            shift and go to state 43
+    INT             shift and go to state 50
+    FLOAT           shift and go to state 41
 
-    expresion                      shift and go to state 77
-    operacion                      shift and go to state 85
+    expresion                      shift and go to state 76
+    operacion                      shift and go to state 84
     constante                      shift and go to state 49
-    exp                            shift and go to state 72
-    factor                         shift and go to state 47
-    termino                        shift and go to state 42
+    exp                            shift and go to state 69
+    factor                         shift and go to state 46
+    termino                        shift and go to state 44
+
+state 62
+
+    (23) varX -> IDENTIFICADOR . varY varZ DELIMITADOR
+    (24) varY -> . DELIMITADOR exp DELIMITADOR
+    (25) varY -> .
+
+  ! shift/reduce conflict for DELIMITADOR resolved as shift
+    DELIMITADOR     shift and go to state 85
+    SEPARADOR       reduce using rule 25 (varY -> .)
+
+  ! DELIMITADOR     [ reduce using rule 25 (varY -> .) ]
+
+    varY                           shift and go to state 17
+
+state 63
+
+    (26) varZ -> SEPARADOR varX .
+
+    DELIMITADOR     reduce using rule 26 (varZ -> SEPARADOR varX .)
+
+
+state 64
+
+    (23) varX -> IDENTIFICADOR varY varZ DELIMITADOR .
+
+    TIPO_STRING     reduce using rule 23 (varX -> IDENTIFICADOR varY varZ DELIMITADOR .)
+    TIPO_CHAR       reduce using rule 23 (varX -> IDENTIFICADOR varY varZ DELIMITADOR .)
+    TIPO_INT        reduce using rule 23 (varX -> IDENTIFICADOR varY varZ DELIMITADOR .)
+    TIPO_FLOAT      reduce using rule 23 (varX -> IDENTIFICADOR varY varZ DELIMITADOR .)
+    MAIN            reduce using rule 23 (varX -> IDENTIFICADOR varY varZ DELIMITADOR .)
+    DELIMITADOR     reduce using rule 23 (varX -> IDENTIFICADOR varY varZ DELIMITADOR .)
+    PRINT           reduce using rule 23 (varX -> IDENTIFICADOR varY varZ DELIMITADOR .)
+    IDENTIFICADOR   reduce using rule 23 (varX -> IDENTIFICADOR varY varZ DELIMITADOR .)
+    IF              reduce using rule 23 (varX -> IDENTIFICADOR varY varZ DELIMITADOR .)
+    FOR             reduce using rule 23 (varX -> IDENTIFICADOR varY varZ DELIMITADOR .)
+    WHILE           reduce using rule 23 (varX -> IDENTIFICADOR varY varZ DELIMITADOR .)
+
 
 state 65
-
-    (24) varY -> DELIMITADOR . exp DELIMITADOR varZ DELIMITADOR
-    (43) exp -> . termino expX
-    (46) termino -> . factor terminoX
-    (34) factor -> . DELIMITADOR expresion DELIMITADOR
-    (35) factor -> . constante
-    (36) factor -> . OPERADOR constante
-    (57) constante -> . STRING
-    (58) constante -> . CHAR
-    (59) constante -> . INT
-    (60) constante -> . FLOAT
-
-    DELIMITADOR     shift and go to state 71
-    OPERADOR        shift and go to state 45
-    STRING          shift and go to state 48
-    CHAR            shift and go to state 41
-    INT             shift and go to state 51
-    FLOAT           shift and go to state 50
-
-    constante                      shift and go to state 49
-    termino                        shift and go to state 42
-    exp                            shift and go to state 52
-    factor                         shift and go to state 47
-
-state 66
-
-    (44) expX -> OPERADOR . exp
-    (43) exp -> . termino expX
-    (46) termino -> . factor terminoX
-    (34) factor -> . DELIMITADOR expresion DELIMITADOR
-    (35) factor -> . constante
-    (36) factor -> . OPERADOR constante
-    (57) constante -> . STRING
-    (58) constante -> . CHAR
-    (59) constante -> . INT
-    (60) constante -> . FLOAT
-
-    DELIMITADOR     shift and go to state 71
-    OPERADOR        shift and go to state 45
-    STRING          shift and go to state 48
-    CHAR            shift and go to state 41
-    INT             shift and go to state 51
-    FLOAT           shift and go to state 50
-
-    constante                      shift and go to state 49
-    termino                        shift and go to state 42
-    exp                            shift and go to state 86
-    factor                         shift and go to state 47
-
-state 67
-
-    (43) exp -> termino expX .
-
-    OPERADOR_LOGICO reduce using rule 43 (exp -> termino expX .)
-    DELIMITADOR     reduce using rule 43 (exp -> termino expX .)
-
-
-state 68
 
     (19) idFuncionX -> tipo IDENTIFICADOR . idFuncionY DELIMITADOR
     (21) idFuncionY -> . SEPARADOR idFuncionX
 
-    SEPARADOR       shift and go to state 87
+    SEPARADOR       shift and go to state 86
 
-    idFuncionY                     shift and go to state 88
+    idFuncionY                     shift and go to state 87
 
-state 69
+state 66
 
     (36) factor -> OPERADOR constante .
 
@@ -1208,14 +1138,14 @@ state 69
     OPERADOR_LOGICO reduce using rule 36 (factor -> OPERADOR constante .)
 
 
-state 70
+state 67
 
     (34) factor -> DELIMITADOR expresion . DELIMITADOR
 
-    DELIMITADOR     shift and go to state 89
+    DELIMITADOR     shift and go to state 88
 
 
-state 71
+state 68
 
     (34) factor -> DELIMITADOR . expresion DELIMITADOR
     (31) expresion -> . exp expresionX
@@ -1229,32 +1159,73 @@ state 71
     (59) constante -> . INT
     (60) constante -> . FLOAT
 
-    DELIMITADOR     shift and go to state 71
-    OPERADOR        shift and go to state 45
+    DELIMITADOR     shift and go to state 68
+    OPERADOR        shift and go to state 40
     STRING          shift and go to state 48
-    CHAR            shift and go to state 41
-    INT             shift and go to state 51
-    FLOAT           shift and go to state 50
+    CHAR            shift and go to state 43
+    INT             shift and go to state 50
+    FLOAT           shift and go to state 41
 
-    expresion                      shift and go to state 70
+    expresion                      shift and go to state 67
     constante                      shift and go to state 49
-    termino                        shift and go to state 42
-    exp                            shift and go to state 72
-    factor                         shift and go to state 47
+    termino                        shift and go to state 44
+    exp                            shift and go to state 69
+    factor                         shift and go to state 46
 
-state 72
+state 69
 
     (31) expresion -> exp . expresionX
     (32) expresionX -> . OPERADOR_LOGICO exp
     (33) expresionX -> .
 
   ! shift/reduce conflict for OPERADOR_LOGICO resolved as shift
-    OPERADOR_LOGICO shift and go to state 91
+    OPERADOR_LOGICO shift and go to state 90
     DELIMITADOR     reduce using rule 33 (expresionX -> .)
 
   ! OPERADOR_LOGICO [ reduce using rule 33 (expresionX -> .) ]
 
-    expresionX                     shift and go to state 90
+    expresionX                     shift and go to state 89
+
+state 70
+
+    (44) expX -> OPERADOR . exp
+    (43) exp -> . termino expX
+    (46) termino -> . factor terminoX
+    (34) factor -> . DELIMITADOR expresion DELIMITADOR
+    (35) factor -> . constante
+    (36) factor -> . OPERADOR constante
+    (57) constante -> . STRING
+    (58) constante -> . CHAR
+    (59) constante -> . INT
+    (60) constante -> . FLOAT
+
+    DELIMITADOR     shift and go to state 68
+    OPERADOR        shift and go to state 40
+    STRING          shift and go to state 48
+    CHAR            shift and go to state 43
+    INT             shift and go to state 50
+    FLOAT           shift and go to state 41
+
+    constante                      shift and go to state 49
+    termino                        shift and go to state 44
+    exp                            shift and go to state 91
+    factor                         shift and go to state 46
+
+state 71
+
+    (43) exp -> termino expX .
+
+    OPERADOR_LOGICO reduce using rule 43 (exp -> termino expX .)
+    DELIMITADOR     reduce using rule 43 (exp -> termino expX .)
+
+
+state 72
+
+    (24) varY -> DELIMITADOR exp DELIMITADOR .
+
+    SEPARADOR       reduce using rule 24 (varY -> DELIMITADOR exp DELIMITADOR .)
+    DELIMITADOR     reduce using rule 24 (varY -> DELIMITADOR exp DELIMITADOR .)
+
 
 state 73
 
@@ -1268,16 +1239,16 @@ state 73
     (59) constante -> . INT
     (60) constante -> . FLOAT
 
-    DELIMITADOR     shift and go to state 71
-    OPERADOR        shift and go to state 45
+    DELIMITADOR     shift and go to state 68
+    OPERADOR        shift and go to state 40
     STRING          shift and go to state 48
-    CHAR            shift and go to state 41
-    INT             shift and go to state 51
-    FLOAT           shift and go to state 50
+    CHAR            shift and go to state 43
+    INT             shift and go to state 50
+    FLOAT           shift and go to state 41
 
     constante                      shift and go to state 49
     termino                        shift and go to state 92
-    factor                         shift and go to state 47
+    factor                         shift and go to state 46
 
 state 74
 
@@ -1290,17 +1261,6 @@ state 74
 
 state 75
 
-    (24) varY -> DELIMITADOR exp DELIMITADOR . varZ DELIMITADOR
-    (26) varZ -> . SEPARADOR varX
-    (27) varZ -> .
-
-    SEPARADOR       shift and go to state 17
-    DELIMITADOR     reduce using rule 27 (varZ -> .)
-
-    varZ                           shift and go to state 93
-
-state 76
-
     (17) funcion -> tipo idFuncion DELIMITADOR bloqueCodigo DELIMITADOR .
 
     TIPO_STRING     reduce using rule 17 (funcion -> tipo idFuncion DELIMITADOR bloqueCodigo DELIMITADOR .)
@@ -1310,64 +1270,64 @@ state 76
     MAIN            reduce using rule 17 (funcion -> tipo idFuncion DELIMITADOR bloqueCodigo DELIMITADOR .)
 
 
-state 77
+state 76
 
     (28) operacion -> expresion . operacionX
     (29) operacionX -> . OPERADOR_LOGICO operacion
     (30) operacionX -> .
 
-    OPERADOR_LOGICO shift and go to state 95
+    OPERADOR_LOGICO shift and go to state 94
     DELIMITADOR     reduce using rule 30 (operacionX -> .)
 
-    operacionX                     shift and go to state 94
+    operacionX                     shift and go to state 93
+
+state 77
+
+    (52) while -> WHILE DELIMITADOR operacion . DELIMITADOR DELIMITADOR bloqueCodigo DELIMITADOR
+
+    DELIMITADOR     shift and go to state 95
+
 
 state 78
 
-    (52) while -> WHILE DELIMITADOR operacion . DELIMITADOR DELIMITADOR bloqueCodigo DELIMITADOR
+    (37) escritura -> PRINT DELIMITADOR operacion . DELIMITADOR DELIMITADOR
 
     DELIMITADOR     shift and go to state 96
 
 
 state 79
 
-    (37) escritura -> PRINT DELIMITADOR operacion . DELIMITADOR DELIMITADOR
+    (49) for -> FOR DELIMITADOR asignacion . DELIMITADOR operacion DELIMITADOR forX DELIMITADOR DELIMITADOR bloqueCodigo DELIMITADOR
 
     DELIMITADOR     shift and go to state 97
 
 
 state 80
 
-    (49) for -> FOR DELIMITADOR asignacion . DELIMITADOR operacion DELIMITADOR forX DELIMITADOR DELIMITADOR bloqueCodigo DELIMITADOR
-
-    DELIMITADOR     shift and go to state 98
-
-
-state 81
-
     (38) asignacion -> IDENTIFICADOR . asignacionX OPERADOR_ASIGNACION asignacionY DELIMITADOR
     (39) asignacionX -> . DELIMITADOR exp DELIMITADOR
     (40) asignacionX -> .
 
-    DELIMITADOR     shift and go to state 99
+    DELIMITADOR     shift and go to state 98
     OPERADOR_ASIGNACION reduce using rule 40 (asignacionX -> .)
 
-    asignacionX                    shift and go to state 62
+    asignacionX                    shift and go to state 59
+
+state 81
+
+    (39) asignacionX -> DELIMITADOR exp . DELIMITADOR
+
+    DELIMITADOR     shift and go to state 99
+
 
 state 82
 
-    (39) asignacionX -> DELIMITADOR exp . DELIMITADOR
+    (56) input -> IDENTIFICADOR OPERADOR_ASIGNACION INPUT . DELIMITADOR tipo DELIMITADOR
 
     DELIMITADOR     shift and go to state 100
 
 
 state 83
-
-    (56) input -> IDENTIFICADOR OPERADOR_ASIGNACION INPUT . DELIMITADOR tipo DELIMITADOR
-
-    DELIMITADOR     shift and go to state 101
-
-
-state 84
 
     (38) asignacion -> IDENTIFICADOR asignacionX OPERADOR_ASIGNACION . asignacionY DELIMITADOR
     (41) asignacionY -> . idFuncion
@@ -1385,39 +1345,56 @@ state 84
     (59) constante -> . INT
     (60) constante -> . FLOAT
 
-    IDENTIFICADOR   shift and go to state 104
-    DELIMITADOR     shift and go to state 71
-    OPERADOR        shift and go to state 45
+    IDENTIFICADOR   shift and go to state 103
+    DELIMITADOR     shift and go to state 68
+    OPERADOR        shift and go to state 40
     STRING          shift and go to state 48
-    CHAR            shift and go to state 41
-    INT             shift and go to state 51
-    FLOAT           shift and go to state 50
+    CHAR            shift and go to state 43
+    INT             shift and go to state 50
+    FLOAT           shift and go to state 41
 
-    expresion                      shift and go to state 77
-    exp                            shift and go to state 72
-    operacion                      shift and go to state 103
+    expresion                      shift and go to state 76
+    exp                            shift and go to state 69
+    operacion                      shift and go to state 102
     constante                      shift and go to state 49
-    factor                         shift and go to state 47
-    idFuncion                      shift and go to state 105
-    termino                        shift and go to state 42
-    asignacionY                    shift and go to state 102
+    factor                         shift and go to state 46
+    idFuncion                      shift and go to state 104
+    termino                        shift and go to state 44
+    asignacionY                    shift and go to state 101
 
-state 85
+state 84
 
     (53) if -> IF DELIMITADOR operacion . DELIMITADOR DELIMITADOR bloqueCodigo DELIMITADOR ifX
 
-    DELIMITADOR     shift and go to state 106
+    DELIMITADOR     shift and go to state 105
 
+
+state 85
+
+    (24) varY -> DELIMITADOR . exp DELIMITADOR
+    (43) exp -> . termino expX
+    (46) termino -> . factor terminoX
+    (34) factor -> . DELIMITADOR expresion DELIMITADOR
+    (35) factor -> . constante
+    (36) factor -> . OPERADOR constante
+    (57) constante -> . STRING
+    (58) constante -> . CHAR
+    (59) constante -> . INT
+    (60) constante -> . FLOAT
+
+    DELIMITADOR     shift and go to state 68
+    OPERADOR        shift and go to state 40
+    STRING          shift and go to state 48
+    CHAR            shift and go to state 43
+    INT             shift and go to state 50
+    FLOAT           shift and go to state 41
+
+    constante                      shift and go to state 49
+    termino                        shift and go to state 44
+    exp                            shift and go to state 45
+    factor                         shift and go to state 46
 
 state 86
-
-    (44) expX -> OPERADOR exp .
-
-    DELIMITADOR     reduce using rule 44 (expX -> OPERADOR exp .)
-    OPERADOR_LOGICO reduce using rule 44 (expX -> OPERADOR exp .)
-
-
-state 87
 
     (21) idFuncionY -> SEPARADOR . idFuncionX
     (19) idFuncionX -> . tipo IDENTIFICADOR idFuncionY DELIMITADOR
@@ -1427,23 +1404,23 @@ state 87
     (63) tipo -> . TIPO_INT
     (64) tipo -> . TIPO_FLOAT
 
-    DELIMITADOR     shift and go to state 107
+    DELIMITADOR     shift and go to state 106
     TIPO_STRING     shift and go to state 7
     TIPO_CHAR       shift and go to state 4
     TIPO_INT        shift and go to state 1
     TIPO_FLOAT      shift and go to state 5
 
-    idFuncionX                     shift and go to state 108
-    tipo                           shift and go to state 44
+    idFuncionX                     shift and go to state 107
+    tipo                           shift and go to state 39
 
-state 88
+state 87
 
     (19) idFuncionX -> tipo IDENTIFICADOR idFuncionY . DELIMITADOR
 
-    DELIMITADOR     shift and go to state 109
+    DELIMITADOR     shift and go to state 108
 
 
-state 89
+state 88
 
     (34) factor -> DELIMITADOR expresion DELIMITADOR .
 
@@ -1452,7 +1429,7 @@ state 89
     OPERADOR_LOGICO reduce using rule 34 (factor -> DELIMITADOR expresion DELIMITADOR .)
 
 
-state 90
+state 89
 
     (31) expresion -> exp expresionX .
 
@@ -1460,7 +1437,7 @@ state 90
     DELIMITADOR     reduce using rule 31 (expresion -> exp expresionX .)
 
 
-state 91
+state 90
 
     (32) expresionX -> OPERADOR_LOGICO . exp
     (43) exp -> . termino expX
@@ -1473,17 +1450,25 @@ state 91
     (59) constante -> . INT
     (60) constante -> . FLOAT
 
-    DELIMITADOR     shift and go to state 71
-    OPERADOR        shift and go to state 45
+    DELIMITADOR     shift and go to state 68
+    OPERADOR        shift and go to state 40
     STRING          shift and go to state 48
-    CHAR            shift and go to state 41
-    INT             shift and go to state 51
-    FLOAT           shift and go to state 50
+    CHAR            shift and go to state 43
+    INT             shift and go to state 50
+    FLOAT           shift and go to state 41
 
     constante                      shift and go to state 49
-    termino                        shift and go to state 42
-    exp                            shift and go to state 110
-    factor                         shift and go to state 47
+    termino                        shift and go to state 44
+    exp                            shift and go to state 109
+    factor                         shift and go to state 46
+
+state 91
+
+    (44) expX -> OPERADOR exp .
+
+    DELIMITADOR     reduce using rule 44 (expX -> OPERADOR exp .)
+    OPERADOR_LOGICO reduce using rule 44 (expX -> OPERADOR exp .)
+
 
 state 92
 
@@ -1496,19 +1481,12 @@ state 92
 
 state 93
 
-    (24) varY -> DELIMITADOR exp DELIMITADOR varZ . DELIMITADOR
-
-    DELIMITADOR     shift and go to state 111
-
-
-state 94
-
     (28) operacion -> expresion operacionX .
 
     DELIMITADOR     reduce using rule 28 (operacion -> expresion operacionX .)
 
 
-state 95
+state 94
 
     (29) operacionX -> OPERADOR_LOGICO . operacion
     (28) operacion -> . expresion operacionX
@@ -1523,35 +1501,35 @@ state 95
     (59) constante -> . INT
     (60) constante -> . FLOAT
 
-    DELIMITADOR     shift and go to state 71
-    OPERADOR        shift and go to state 45
+    DELIMITADOR     shift and go to state 68
+    OPERADOR        shift and go to state 40
     STRING          shift and go to state 48
-    CHAR            shift and go to state 41
-    INT             shift and go to state 51
-    FLOAT           shift and go to state 50
+    CHAR            shift and go to state 43
+    INT             shift and go to state 50
+    FLOAT           shift and go to state 41
 
-    expresion                      shift and go to state 77
-    operacion                      shift and go to state 112
+    expresion                      shift and go to state 76
+    operacion                      shift and go to state 110
     constante                      shift and go to state 49
-    termino                        shift and go to state 42
-    exp                            shift and go to state 72
-    factor                         shift and go to state 47
+    termino                        shift and go to state 44
+    exp                            shift and go to state 69
+    factor                         shift and go to state 46
 
-state 96
+state 95
 
     (52) while -> WHILE DELIMITADOR operacion DELIMITADOR . DELIMITADOR bloqueCodigo DELIMITADOR
 
-    DELIMITADOR     shift and go to state 113
+    DELIMITADOR     shift and go to state 111
 
 
-state 97
+state 96
 
     (37) escritura -> PRINT DELIMITADOR operacion DELIMITADOR . DELIMITADOR
 
-    DELIMITADOR     shift and go to state 114
+    DELIMITADOR     shift and go to state 112
 
 
-state 98
+state 97
 
     (49) for -> FOR DELIMITADOR asignacion DELIMITADOR . operacion DELIMITADOR forX DELIMITADOR DELIMITADOR bloqueCodigo DELIMITADOR
     (28) operacion -> . expresion operacionX
@@ -1566,21 +1544,21 @@ state 98
     (59) constante -> . INT
     (60) constante -> . FLOAT
 
-    DELIMITADOR     shift and go to state 71
-    OPERADOR        shift and go to state 45
+    DELIMITADOR     shift and go to state 68
+    OPERADOR        shift and go to state 40
     STRING          shift and go to state 48
-    CHAR            shift and go to state 41
-    INT             shift and go to state 51
-    FLOAT           shift and go to state 50
+    CHAR            shift and go to state 43
+    INT             shift and go to state 50
+    FLOAT           shift and go to state 41
 
-    expresion                      shift and go to state 77
-    operacion                      shift and go to state 115
+    expresion                      shift and go to state 76
+    operacion                      shift and go to state 113
     constante                      shift and go to state 49
-    exp                            shift and go to state 72
-    factor                         shift and go to state 47
-    termino                        shift and go to state 42
+    exp                            shift and go to state 69
+    factor                         shift and go to state 46
+    termino                        shift and go to state 44
 
-state 99
+state 98
 
     (39) asignacionX -> DELIMITADOR . exp DELIMITADOR
     (43) exp -> . termino expX
@@ -1593,26 +1571,26 @@ state 99
     (59) constante -> . INT
     (60) constante -> . FLOAT
 
-    DELIMITADOR     shift and go to state 71
-    OPERADOR        shift and go to state 45
+    DELIMITADOR     shift and go to state 68
+    OPERADOR        shift and go to state 40
     STRING          shift and go to state 48
-    CHAR            shift and go to state 41
-    INT             shift and go to state 51
-    FLOAT           shift and go to state 50
+    CHAR            shift and go to state 43
+    INT             shift and go to state 50
+    FLOAT           shift and go to state 41
 
     constante                      shift and go to state 49
-    termino                        shift and go to state 42
-    exp                            shift and go to state 82
-    factor                         shift and go to state 47
+    termino                        shift and go to state 44
+    exp                            shift and go to state 81
+    factor                         shift and go to state 46
 
-state 100
+state 99
 
     (39) asignacionX -> DELIMITADOR exp DELIMITADOR .
 
     OPERADOR_ASIGNACION reduce using rule 39 (asignacionX -> DELIMITADOR exp DELIMITADOR .)
 
 
-state 101
+state 100
 
     (56) input -> IDENTIFICADOR OPERADOR_ASIGNACION INPUT DELIMITADOR . tipo DELIMITADOR
     (61) tipo -> . TIPO_STRING
@@ -1625,58 +1603,58 @@ state 101
     TIPO_INT        shift and go to state 1
     TIPO_FLOAT      shift and go to state 5
 
-    tipo                           shift and go to state 116
+    tipo                           shift and go to state 114
 
-state 102
+state 101
 
     (38) asignacion -> IDENTIFICADOR asignacionX OPERADOR_ASIGNACION asignacionY . DELIMITADOR
 
-    DELIMITADOR     shift and go to state 117
+    DELIMITADOR     shift and go to state 115
 
 
-state 103
+state 102
 
     (42) asignacionY -> operacion .
 
     DELIMITADOR     reduce using rule 42 (asignacionY -> operacion .)
 
 
-state 104
+state 103
 
     (18) idFuncion -> IDENTIFICADOR . DELIMITADOR idFuncionX
 
-    DELIMITADOR     shift and go to state 118
+    DELIMITADOR     shift and go to state 116
 
 
-state 105
+state 104
 
     (41) asignacionY -> idFuncion .
 
     DELIMITADOR     reduce using rule 41 (asignacionY -> idFuncion .)
 
 
-state 106
+state 105
 
     (53) if -> IF DELIMITADOR operacion DELIMITADOR . DELIMITADOR bloqueCodigo DELIMITADOR ifX
 
-    DELIMITADOR     shift and go to state 119
+    DELIMITADOR     shift and go to state 117
 
 
-state 107
+state 106
 
     (20) idFuncionX -> DELIMITADOR .
 
     DELIMITADOR     reduce using rule 20 (idFuncionX -> DELIMITADOR .)
 
 
-state 108
+state 107
 
     (21) idFuncionY -> SEPARADOR idFuncionX .
 
     DELIMITADOR     reduce using rule 21 (idFuncionY -> SEPARADOR idFuncionX .)
 
 
-state 109
+state 108
 
     (19) idFuncionX -> tipo IDENTIFICADOR idFuncionY DELIMITADOR .
 
@@ -1692,7 +1670,7 @@ state 109
     DELIMITADOR     reduce using rule 19 (idFuncionX -> tipo IDENTIFICADOR idFuncionY DELIMITADOR .)
 
 
-state 110
+state 109
 
     (32) expresionX -> OPERADOR_LOGICO exp .
 
@@ -1700,31 +1678,14 @@ state 110
     OPERADOR_LOGICO reduce using rule 32 (expresionX -> OPERADOR_LOGICO exp .)
 
 
-state 111
-
-    (24) varY -> DELIMITADOR exp DELIMITADOR varZ DELIMITADOR .
-
-    DELIMITADOR     reduce using rule 24 (varY -> DELIMITADOR exp DELIMITADOR varZ DELIMITADOR .)
-    PRINT           reduce using rule 24 (varY -> DELIMITADOR exp DELIMITADOR varZ DELIMITADOR .)
-    IDENTIFICADOR   reduce using rule 24 (varY -> DELIMITADOR exp DELIMITADOR varZ DELIMITADOR .)
-    IF              reduce using rule 24 (varY -> DELIMITADOR exp DELIMITADOR varZ DELIMITADOR .)
-    FOR             reduce using rule 24 (varY -> DELIMITADOR exp DELIMITADOR varZ DELIMITADOR .)
-    WHILE           reduce using rule 24 (varY -> DELIMITADOR exp DELIMITADOR varZ DELIMITADOR .)
-    TIPO_STRING     reduce using rule 24 (varY -> DELIMITADOR exp DELIMITADOR varZ DELIMITADOR .)
-    TIPO_CHAR       reduce using rule 24 (varY -> DELIMITADOR exp DELIMITADOR varZ DELIMITADOR .)
-    TIPO_INT        reduce using rule 24 (varY -> DELIMITADOR exp DELIMITADOR varZ DELIMITADOR .)
-    TIPO_FLOAT      reduce using rule 24 (varY -> DELIMITADOR exp DELIMITADOR varZ DELIMITADOR .)
-    MAIN            reduce using rule 24 (varY -> DELIMITADOR exp DELIMITADOR varZ DELIMITADOR .)
-
-
-state 112
+state 110
 
     (29) operacionX -> OPERADOR_LOGICO operacion .
 
     DELIMITADOR     reduce using rule 29 (operacionX -> OPERADOR_LOGICO operacion .)
 
 
-state 113
+state 111
 
     (52) while -> WHILE DELIMITADOR operacion DELIMITADOR DELIMITADOR . bloqueCodigo DELIMITADOR
     (5) bloqueCodigo -> . bloqueCodigoX bloqueCodigoY
@@ -1750,30 +1711,30 @@ state 113
     (63) tipo -> . TIPO_INT
     (64) tipo -> . TIPO_FLOAT
 
-    PRINT           shift and go to state 23
-    IDENTIFICADOR   shift and go to state 31
-    IF              shift and go to state 34
-    FOR             shift and go to state 30
-    WHILE           shift and go to state 22
+    PRINT           shift and go to state 21
+    IDENTIFICADOR   shift and go to state 29
+    IF              shift and go to state 32
+    FOR             shift and go to state 28
+    WHILE           shift and go to state 20
     TIPO_STRING     shift and go to state 7
     TIPO_CHAR       shift and go to state 4
     TIPO_INT        shift and go to state 1
     TIPO_FLOAT      shift and go to state 5
 
-    for                            shift and go to state 26
-    asignacion                     shift and go to state 35
-    estatuto                       shift and go to state 27
-    tipo                           shift and go to state 38
-    idFuncion                      shift and go to state 32
-    while                          shift and go to state 36
-    if                             shift and go to state 25
-    bloqueCodigo                   shift and go to state 120
-    var                            shift and go to state 28
-    input                          shift and go to state 29
-    escritura                      shift and go to state 37
-    bloqueCodigoX                  shift and go to state 24
+    for                            shift and go to state 24
+    asignacion                     shift and go to state 33
+    estatuto                       shift and go to state 25
+    tipo                           shift and go to state 36
+    idFuncion                      shift and go to state 30
+    while                          shift and go to state 34
+    if                             shift and go to state 23
+    bloqueCodigo                   shift and go to state 118
+    var                            shift and go to state 26
+    input                          shift and go to state 27
+    escritura                      shift and go to state 35
+    bloqueCodigoX                  shift and go to state 22
 
-state 114
+state 112
 
     (37) escritura -> PRINT DELIMITADOR operacion DELIMITADOR DELIMITADOR .
 
@@ -1789,21 +1750,21 @@ state 114
     DELIMITADOR     reduce using rule 37 (escritura -> PRINT DELIMITADOR operacion DELIMITADOR DELIMITADOR .)
 
 
-state 115
+state 113
 
     (49) for -> FOR DELIMITADOR asignacion DELIMITADOR operacion . DELIMITADOR forX DELIMITADOR DELIMITADOR bloqueCodigo DELIMITADOR
 
-    DELIMITADOR     shift and go to state 121
+    DELIMITADOR     shift and go to state 119
 
 
-state 116
+state 114
 
     (56) input -> IDENTIFICADOR OPERADOR_ASIGNACION INPUT DELIMITADOR tipo . DELIMITADOR
 
-    DELIMITADOR     shift and go to state 122
+    DELIMITADOR     shift and go to state 120
 
 
-state 117
+state 115
 
     (38) asignacion -> IDENTIFICADOR asignacionX OPERADOR_ASIGNACION asignacionY DELIMITADOR .
 
@@ -1819,7 +1780,7 @@ state 117
     DELIMITADOR     reduce using rule 38 (asignacion -> IDENTIFICADOR asignacionX OPERADOR_ASIGNACION asignacionY DELIMITADOR .)
 
 
-state 118
+state 116
 
     (18) idFuncion -> IDENTIFICADOR DELIMITADOR . idFuncionX
     (19) idFuncionX -> . tipo IDENTIFICADOR idFuncionY DELIMITADOR
@@ -1829,16 +1790,16 @@ state 118
     (63) tipo -> . TIPO_INT
     (64) tipo -> . TIPO_FLOAT
 
-    DELIMITADOR     shift and go to state 107
+    DELIMITADOR     shift and go to state 106
     TIPO_STRING     shift and go to state 7
     TIPO_CHAR       shift and go to state 4
     TIPO_INT        shift and go to state 1
     TIPO_FLOAT      shift and go to state 5
 
-    idFuncionX                     shift and go to state 43
-    tipo                           shift and go to state 44
+    idFuncionX                     shift and go to state 47
+    tipo                           shift and go to state 39
 
-state 119
+state 117
 
     (53) if -> IF DELIMITADOR operacion DELIMITADOR DELIMITADOR . bloqueCodigo DELIMITADOR ifX
     (5) bloqueCodigo -> . bloqueCodigoX bloqueCodigoY
@@ -1864,37 +1825,37 @@ state 119
     (63) tipo -> . TIPO_INT
     (64) tipo -> . TIPO_FLOAT
 
-    PRINT           shift and go to state 23
-    IDENTIFICADOR   shift and go to state 31
-    IF              shift and go to state 34
-    FOR             shift and go to state 30
-    WHILE           shift and go to state 22
+    PRINT           shift and go to state 21
+    IDENTIFICADOR   shift and go to state 29
+    IF              shift and go to state 32
+    FOR             shift and go to state 28
+    WHILE           shift and go to state 20
     TIPO_STRING     shift and go to state 7
     TIPO_CHAR       shift and go to state 4
     TIPO_INT        shift and go to state 1
     TIPO_FLOAT      shift and go to state 5
 
-    for                            shift and go to state 26
-    asignacion                     shift and go to state 35
-    estatuto                       shift and go to state 27
-    idFuncion                      shift and go to state 32
-    while                          shift and go to state 36
-    if                             shift and go to state 25
-    bloqueCodigo                   shift and go to state 123
-    var                            shift and go to state 28
-    input                          shift and go to state 29
-    escritura                      shift and go to state 37
-    tipo                           shift and go to state 38
-    bloqueCodigoX                  shift and go to state 24
+    for                            shift and go to state 24
+    asignacion                     shift and go to state 33
+    estatuto                       shift and go to state 25
+    idFuncion                      shift and go to state 30
+    while                          shift and go to state 34
+    if                             shift and go to state 23
+    bloqueCodigo                   shift and go to state 121
+    var                            shift and go to state 26
+    input                          shift and go to state 27
+    escritura                      shift and go to state 35
+    tipo                           shift and go to state 36
+    bloqueCodigoX                  shift and go to state 22
 
-state 120
+state 118
 
     (52) while -> WHILE DELIMITADOR operacion DELIMITADOR DELIMITADOR bloqueCodigo . DELIMITADOR
 
-    DELIMITADOR     shift and go to state 124
+    DELIMITADOR     shift and go to state 122
 
 
-state 121
+state 119
 
     (49) for -> FOR DELIMITADOR asignacion DELIMITADOR operacion DELIMITADOR . forX DELIMITADOR DELIMITADOR bloqueCodigo DELIMITADOR
     (50) forX -> . exp
@@ -1910,22 +1871,22 @@ state 121
     (59) constante -> . INT
     (60) constante -> . FLOAT
 
-    IDENTIFICADOR   shift and go to state 81
-    DELIMITADOR     shift and go to state 71
-    OPERADOR        shift and go to state 45
+    IDENTIFICADOR   shift and go to state 80
+    DELIMITADOR     shift and go to state 68
+    OPERADOR        shift and go to state 40
     STRING          shift and go to state 48
-    CHAR            shift and go to state 41
-    INT             shift and go to state 51
-    FLOAT           shift and go to state 50
+    CHAR            shift and go to state 43
+    INT             shift and go to state 50
+    FLOAT           shift and go to state 41
 
-    asignacion                     shift and go to state 125
+    asignacion                     shift and go to state 123
     constante                      shift and go to state 49
-    factor                         shift and go to state 47
-    forX                           shift and go to state 126
-    termino                        shift and go to state 42
-    exp                            shift and go to state 127
+    factor                         shift and go to state 46
+    forX                           shift and go to state 124
+    termino                        shift and go to state 44
+    exp                            shift and go to state 125
 
-state 122
+state 120
 
     (56) input -> IDENTIFICADOR OPERADOR_ASIGNACION INPUT DELIMITADOR tipo DELIMITADOR .
 
@@ -1941,14 +1902,14 @@ state 122
     DELIMITADOR     reduce using rule 56 (input -> IDENTIFICADOR OPERADOR_ASIGNACION INPUT DELIMITADOR tipo DELIMITADOR .)
 
 
-state 123
+state 121
 
     (53) if -> IF DELIMITADOR operacion DELIMITADOR DELIMITADOR bloqueCodigo . DELIMITADOR ifX
 
-    DELIMITADOR     shift and go to state 128
+    DELIMITADOR     shift and go to state 126
 
 
-state 124
+state 122
 
     (52) while -> WHILE DELIMITADOR operacion DELIMITADOR DELIMITADOR bloqueCodigo DELIMITADOR .
 
@@ -1964,34 +1925,34 @@ state 124
     DELIMITADOR     reduce using rule 52 (while -> WHILE DELIMITADOR operacion DELIMITADOR DELIMITADOR bloqueCodigo DELIMITADOR .)
 
 
-state 125
+state 123
 
     (51) forX -> asignacion .
 
     DELIMITADOR     reduce using rule 51 (forX -> asignacion .)
 
 
-state 126
+state 124
 
     (49) for -> FOR DELIMITADOR asignacion DELIMITADOR operacion DELIMITADOR forX . DELIMITADOR DELIMITADOR bloqueCodigo DELIMITADOR
 
-    DELIMITADOR     shift and go to state 129
+    DELIMITADOR     shift and go to state 127
 
 
-state 127
+state 125
 
     (50) forX -> exp .
 
     DELIMITADOR     reduce using rule 50 (forX -> exp .)
 
 
-state 128
+state 126
 
     (53) if -> IF DELIMITADOR operacion DELIMITADOR DELIMITADOR bloqueCodigo DELIMITADOR . ifX
     (54) ifX -> . ELSE DELIMITADOR bloqueCodigo DELIMITADOR
     (55) ifX -> .
 
-    ELSE            shift and go to state 131
+    ELSE            shift and go to state 129
     PRINT           reduce using rule 55 (ifX -> .)
     IDENTIFICADOR   reduce using rule 55 (ifX -> .)
     IF              reduce using rule 55 (ifX -> .)
@@ -2003,16 +1964,16 @@ state 128
     TIPO_FLOAT      reduce using rule 55 (ifX -> .)
     DELIMITADOR     reduce using rule 55 (ifX -> .)
 
-    ifX                            shift and go to state 130
+    ifX                            shift and go to state 128
 
-state 129
+state 127
 
     (49) for -> FOR DELIMITADOR asignacion DELIMITADOR operacion DELIMITADOR forX DELIMITADOR . DELIMITADOR bloqueCodigo DELIMITADOR
 
-    DELIMITADOR     shift and go to state 132
+    DELIMITADOR     shift and go to state 130
 
 
-state 130
+state 128
 
     (53) if -> IF DELIMITADOR operacion DELIMITADOR DELIMITADOR bloqueCodigo DELIMITADOR ifX .
 
@@ -2028,14 +1989,14 @@ state 130
     DELIMITADOR     reduce using rule 53 (if -> IF DELIMITADOR operacion DELIMITADOR DELIMITADOR bloqueCodigo DELIMITADOR ifX .)
 
 
-state 131
+state 129
 
     (54) ifX -> ELSE . DELIMITADOR bloqueCodigo DELIMITADOR
 
-    DELIMITADOR     shift and go to state 133
+    DELIMITADOR     shift and go to state 131
 
 
-state 132
+state 130
 
     (49) for -> FOR DELIMITADOR asignacion DELIMITADOR operacion DELIMITADOR forX DELIMITADOR DELIMITADOR . bloqueCodigo DELIMITADOR
     (5) bloqueCodigo -> . bloqueCodigoX bloqueCodigoY
@@ -2061,30 +2022,30 @@ state 132
     (63) tipo -> . TIPO_INT
     (64) tipo -> . TIPO_FLOAT
 
-    PRINT           shift and go to state 23
-    IDENTIFICADOR   shift and go to state 31
-    IF              shift and go to state 34
-    FOR             shift and go to state 30
-    WHILE           shift and go to state 22
+    PRINT           shift and go to state 21
+    IDENTIFICADOR   shift and go to state 29
+    IF              shift and go to state 32
+    FOR             shift and go to state 28
+    WHILE           shift and go to state 20
     TIPO_STRING     shift and go to state 7
     TIPO_CHAR       shift and go to state 4
     TIPO_INT        shift and go to state 1
     TIPO_FLOAT      shift and go to state 5
 
-    for                            shift and go to state 26
-    asignacion                     shift and go to state 35
-    estatuto                       shift and go to state 27
-    tipo                           shift and go to state 38
-    idFuncion                      shift and go to state 32
-    while                          shift and go to state 36
-    if                             shift and go to state 25
-    bloqueCodigo                   shift and go to state 134
-    var                            shift and go to state 28
-    input                          shift and go to state 29
-    escritura                      shift and go to state 37
-    bloqueCodigoX                  shift and go to state 24
+    for                            shift and go to state 24
+    asignacion                     shift and go to state 33
+    estatuto                       shift and go to state 25
+    tipo                           shift and go to state 36
+    idFuncion                      shift and go to state 30
+    while                          shift and go to state 34
+    if                             shift and go to state 23
+    bloqueCodigo                   shift and go to state 132
+    var                            shift and go to state 26
+    input                          shift and go to state 27
+    escritura                      shift and go to state 35
+    bloqueCodigoX                  shift and go to state 22
 
-state 133
+state 131
 
     (54) ifX -> ELSE DELIMITADOR . bloqueCodigo DELIMITADOR
     (5) bloqueCodigo -> . bloqueCodigoX bloqueCodigoY
@@ -2110,44 +2071,44 @@ state 133
     (63) tipo -> . TIPO_INT
     (64) tipo -> . TIPO_FLOAT
 
-    PRINT           shift and go to state 23
-    IDENTIFICADOR   shift and go to state 31
-    IF              shift and go to state 34
-    FOR             shift and go to state 30
-    WHILE           shift and go to state 22
+    PRINT           shift and go to state 21
+    IDENTIFICADOR   shift and go to state 29
+    IF              shift and go to state 32
+    FOR             shift and go to state 28
+    WHILE           shift and go to state 20
     TIPO_STRING     shift and go to state 7
     TIPO_CHAR       shift and go to state 4
     TIPO_INT        shift and go to state 1
     TIPO_FLOAT      shift and go to state 5
 
-    for                            shift and go to state 26
-    asignacion                     shift and go to state 35
-    estatuto                       shift and go to state 27
-    tipo                           shift and go to state 38
-    idFuncion                      shift and go to state 32
-    while                          shift and go to state 36
-    if                             shift and go to state 25
-    bloqueCodigo                   shift and go to state 135
-    var                            shift and go to state 28
-    input                          shift and go to state 29
-    bloqueCodigoX                  shift and go to state 24
-    escritura                      shift and go to state 37
+    for                            shift and go to state 24
+    asignacion                     shift and go to state 33
+    estatuto                       shift and go to state 25
+    tipo                           shift and go to state 36
+    idFuncion                      shift and go to state 30
+    while                          shift and go to state 34
+    if                             shift and go to state 23
+    bloqueCodigo                   shift and go to state 133
+    var                            shift and go to state 26
+    input                          shift and go to state 27
+    bloqueCodigoX                  shift and go to state 22
+    escritura                      shift and go to state 35
 
-state 134
+state 132
 
     (49) for -> FOR DELIMITADOR asignacion DELIMITADOR operacion DELIMITADOR forX DELIMITADOR DELIMITADOR bloqueCodigo . DELIMITADOR
 
-    DELIMITADOR     shift and go to state 136
+    DELIMITADOR     shift and go to state 134
 
 
-state 135
+state 133
 
     (54) ifX -> ELSE DELIMITADOR bloqueCodigo . DELIMITADOR
 
-    DELIMITADOR     shift and go to state 137
+    DELIMITADOR     shift and go to state 135
 
 
-state 136
+state 134
 
     (49) for -> FOR DELIMITADOR asignacion DELIMITADOR operacion DELIMITADOR forX DELIMITADOR DELIMITADOR bloqueCodigo DELIMITADOR .
 
@@ -2163,7 +2124,7 @@ state 136
     DELIMITADOR     reduce using rule 49 (for -> FOR DELIMITADOR asignacion DELIMITADOR operacion DELIMITADOR forX DELIMITADOR DELIMITADOR bloqueCodigo DELIMITADOR .)
 
 
-state 137
+state 135
 
     (54) ifX -> ELSE DELIMITADOR bloqueCodigo DELIMITADOR .
 
@@ -2182,8 +2143,8 @@ WARNING:
 WARNING: Conflicts:
 WARNING: 
 WARNING: shift/reduce conflict for DELIMITADOR in state 12 resolved as shift
-WARNING: shift/reduce conflict for OPERADOR_ASIGNACION in state 31 resolved as shift
-WARNING: shift/reduce conflict for DELIMITADOR in state 39 resolved as shift
-WARNING: shift/reduce conflict for DELIMITADOR in state 46 resolved as shift
-WARNING: shift/reduce conflict for OPERADOR in state 47 resolved as shift
-WARNING: shift/reduce conflict for OPERADOR_LOGICO in state 72 resolved as shift
+WARNING: shift/reduce conflict for OPERADOR_ASIGNACION in state 29 resolved as shift
+WARNING: shift/reduce conflict for DELIMITADOR in state 42 resolved as shift
+WARNING: shift/reduce conflict for OPERADOR in state 46 resolved as shift
+WARNING: shift/reduce conflict for DELIMITADOR in state 62 resolved as shift
+WARNING: shift/reduce conflict for OPERADOR_LOGICO in state 69 resolved as shift
