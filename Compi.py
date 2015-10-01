@@ -74,18 +74,19 @@ def p_estatuto(p):
                 | if
                 | asignacion
                 | for
-                | while'''
+                | while
+                | idFuncion'''
 
 #Funcion
 def p_funcion(p):
     '''funcion : tipo idFuncion DELIMITADOR bloqueCodigo DELIMITADOR'''
     
 def p_idFuncion(p):
-    '''idFuncion : IDENTIFICADOR DELIMITADOR idFuncionX DELIMITADOR'''
+    '''idFuncion : IDENTIFICADOR DELIMITADOR idFuncionX'''
     
 def p_idFuncionX(p):
-    '''idFuncionX : tipo IDENTIFICADOR idFuncionY
-                  | ''' #Epsilon
+    '''idFuncionX : tipo IDENTIFICADOR idFuncionY DELIMITADOR
+                  | DELIMITADOR''' #Epsilon
     
 def p_idFuncionY(p):
     '''idFuncionY : SEPARADOR idFuncionX'''
@@ -95,11 +96,11 @@ def p_var(p):
     '''var : tipo varX'''
     
 def p_varX(p):
-    '''varX : IDENTIFICADOR varY varZ DELIMITADOR'''
+    '''varX : IDENTIFICADOR varY'''
     
 def p_varY(p):
-    '''varY : DELIMITADOR exp DELIMITADOR
-            | ''' #Epsilon
+    '''varY : DELIMITADOR exp DELIMITADOR varZ DELIMITADOR
+            | varZ DELIMITADOR''' #Epsilon
        
 def p_varZ(p):
     '''varZ : SEPARADOR varX
@@ -133,11 +134,15 @@ def p_escritura(p):
 
 #Asignacion
 def p_asignacion(p):
-    '''asignacion : IDENTIFICADOR asignacionX OPERADOR_ASIGNACION operacion DELIMITADOR'''
+    '''asignacion : IDENTIFICADOR asignacionX OPERADOR_ASIGNACION asignacionY DELIMITADOR'''
     
 def p_asignacionX(p):
     '''asignacionX : DELIMITADOR exp DELIMITADOR
                    | ''' #Epsilon
+
+def p_asignacionY(p):
+    '''asignacionY : idFuncion
+                   | operacion'''
 
 #Exp
 def p_exp(p):
