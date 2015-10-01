@@ -70,6 +70,7 @@ def p_bloqueCodigoY(p):
 #Estatuto
 def p_estatuto(p):
     '''estatuto : escritura
+                | input
                 | if
                 | asignacion
                 | for
@@ -156,8 +157,12 @@ def p_terminoX(p):
                 
 #For
 def p_for(p):
-    '''for : FOR DELIMITADOR asignacion DELIMITADOR operacion DELIMITADOR exp DELIMITADOR DELIMITADOR bloqueCodigo DELIMITADOR'''
-    
+    '''for : FOR DELIMITADOR asignacion DELIMITADOR operacion DELIMITADOR forX DELIMITADOR DELIMITADOR bloqueCodigo DELIMITADOR'''
+
+def p_forX(p):
+    '''forX : exp
+            | asignacion'''
+
 #While
 def p_while(p):
     '''while : WHILE DELIMITADOR operacion DELIMITADOR DELIMITADOR bloqueCodigo DELIMITADOR'''
@@ -169,6 +174,10 @@ def p_if(p):
 def p_ifX(p):
     '''ifX : ELSE DELIMITADOR bloqueCodigo DELIMITADOR
            | ''' #Epsilon
+
+#Input
+def p_input(p):
+    '''input : IDENTIFICADOR OPERADOR_ASIGNACION INPUT DELIMITADOR tipo DELIMITADOR'''
 
 #Constante
 def p_constante(p):
